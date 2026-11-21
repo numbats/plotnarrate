@@ -1,4 +1,4 @@
-Package: autoalt
+Package: plotnarrate
 Type: Package
 Title: Automatic alt text generation
 Version: 0.1.0

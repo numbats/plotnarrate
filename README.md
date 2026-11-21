@@ -1,13 +1,13 @@
-# autoAlt <a href="https://numbats.github.io/autoAlt/"><img src="man/figures/autoAlt-logo.png" align="right" height="138" /></a>
+# plotnarrate <a href="https://numbats.github.io/autoAlt/"><img src="man/figures/autoAlt-logo.png" align="right" height="138" /></a>
 
-autoAlt is a demo R package for automatically generating alt-text from QMD and RMD files. It includes the `generate_alt_text()` function, which uses Ellmer and BrailleR to create alt-text for plots in your documents.
+Plotnarrate is a demo R package for automatically generating alt-text from QMD and RMD files. It includes the `generate_alt_text()` function, which uses Ellmer and BrailleR to create alt-text for plots in your documents.
 
 # Install
 
 You can install the development version from GitHub:
 
 ```
-remotes::install_github("numbats/autoAlt")
+remotes::install_github("numbats/plotnarrate")
 ```
 
 It depends on having [BrailleR](https://github.com/ajrgodfrey/BrailleR) which needs to be installed from GitHub.
@@ -19,7 +19,7 @@ To get started, you will need to get an API key for OpenAI from https://platform
 Provide the file path and name for the `qmd` or `Rmd` file you want to process, and an output file path and name. Ensure that all code required to generate graphics is included in the same file. This github repo comes with a `test.qmd` file in the `inst` folder to get you started.
 
 ```
-autoalt::generate_alt_text("inst/test.qmd", "inst/test-out.txt", api = api)
+plotnarrate::generate_alt_text("inst/test.qmd", "inst/test-out.txt", api = api)
 ```
 
 The generate_alt_text() function scans the document for code chunks containing ggplot, geom, and aes, identifying the source code that generates plots. It extracts the chunk label and uses it to locate the corresponding reference paragraph in the text, and sends requests to ChatGPT via Ellmer, combining: the output from BrailleR (when applicable), and a custom system prompt.
