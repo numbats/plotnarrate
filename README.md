@@ -19,7 +19,9 @@ To get started, you will need to get an API key for OpenAI from https://platform
 Provide the file path and name for the `qmd` or `Rmd` file you want to process, and an output file path and name. Ensure that all code required to generate graphics is included in the same file. This github repo comes with a `test.qmd` file in the `inst` folder to get you started.
 
 ```
-plotnarrate::generate_alt_text("inst/test.qmd", "inst/test-out.txt", api = api)
+plotnarrate::generate_alt_text(flnm = "inst/test.qmd",
+                               outfile = "inst/test-out.txt", 
+                               api = api)
 ```
 
 The generate_alt_text() function scans the document for code chunks containing ggplot, geom, and aes, identifying the source code that generates plots. It extracts the chunk label and uses it to locate the corresponding reference paragraph in the text, and sends requests to ChatGPT via Ellmer, combining: the output from BrailleR (when applicable), and a custom system prompt.
@@ -27,19 +29,6 @@ The generate_alt_text() function scans the document for code chunks containing g
 In cases where the example is not self-contained, OpenAI's code interpreter is used in place of BrailleR to understand the code and generate alt-text. Output will be saved in a separate `alt-text.txt` file as seen below. The generated alt-text is saved in a separate file called alt-text.txt, as shown below:
 
 ![](man/figures/alt_text.png)
-
-# Known errors
-
-If you get 
-
-```
-Error in `stringr::str_detect()`:
-! `pattern` can't be the empty string (`""`).
-Run `rlang::last_trace()` to see where the error occurred.
-```
-
-it means one of your R chunks that plots is not formed properly. We'll fix this soon.
-
 
 # Contribute
 
