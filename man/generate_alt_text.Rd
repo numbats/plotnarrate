@@ -123,7 +123,5 @@ generate_alt_text(
 )
 }
 
-}
-\seealso{
-[extract_ggplot_code()]
+
 }

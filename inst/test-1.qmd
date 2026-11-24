@@ -69,4 +69,3 @@ ggplot(mtcars, aes(x = wt, y = mpg, color = factor(am))) +
 
 This analysis of the mtcars dataset reveals several key insights into how car design impacts fuel efficiency. Cars with higher horsepower and greater weight tend to have lower miles per gallon, reflecting the energy costs of more powerful and heavier engines. Additionally, cars with fewer cylinders are generally more fuel efficient. Transmission type also plays a role, with manual transmissions showing a modest advantage in fuel economy for cars of similar weight.
 
-

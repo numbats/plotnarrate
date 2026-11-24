@@ -4,6 +4,7 @@ template:
   includes:
     in_header: |
       <style>
-        .page-header { border-bottom: transparent; }
+        .page-header { border-bottom: transparent; min-height: 50px;}
         .template-home .page-header {min-height: 50px;}
+
       </style>

@@ -124,7 +124,6 @@ system_prompt <- function(kind, user_instruct = NULL) {
 #' patterns, and relevant interpretations. A checklist is also
 #' included to indicate whether these elements have been addressed.
 #'
-#' @seealso [extract_ggplot_code()]
 #' @examples
 #' \dontrun{
 #' # Generate alt-text from a Quarto document
@@ -154,6 +153,7 @@ system_prompt <- function(kind, user_instruct = NULL) {
 #'   api = Sys.getenv("OPENAI_API_KEY")
 #' )
 #' }
+#'
 #'
 #' @export
 generate_alt_text <- function(
@@ -531,7 +531,7 @@ client_responses <- function(body_list, content) {
 
   chat <- ellmer::chat_openai(
     model = body_list$model,
-    api_key = body_list$api_key,
+    credentials = function() body_list$api_key,
     system_prompt = system_prompt(kind, body_list$user_instruct)
   )
 

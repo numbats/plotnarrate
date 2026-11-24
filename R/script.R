@@ -266,11 +266,13 @@ find_reference_text <- function(content, chunk_label, chunk_start, chunk_end) {
 
     line <- content[i]
 
-    for (p in reference_pattern) {
-      if (stringr::str_detect(line, p)) {
-        # Not all paragraphs are written in one long line. So a paragraph is defined by white space at both end.
-        paragraph <- extract_paragraph(content, i)
-        break
+    if (nchar(chunk_label) > 0) {
+      for (p in reference_pattern) {
+        if (stringr::str_detect(line, p)) {
+          # Not all paragraphs are written in one long line. So a paragraph is defined by white space at both end.
+          paragraph <- extract_paragraph(content, i)
+          break
+        }
       }
     }
   }
