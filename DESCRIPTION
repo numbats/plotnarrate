@@ -39,7 +39,7 @@ Imports: knitr,
          tidyverse,
          ellmer,
          usethis
-RoxygenNote: 8.1.1
 Suggests: 
     rmarkdown
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.1

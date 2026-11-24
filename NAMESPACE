@@ -9,8 +9,10 @@ export(find_chunk_location)
 export(find_reference_text)
 export(generate_alt_text)
 importFrom(knitr,purl)
-importFrom(stringr,fixed)
-importFrom(stringr,str_detect)
-importFrom(stringr,str_extract)
-importFrom(stringr,str_split)
-importFrom(stringr,str_trim)
+importFrom(stringr,
+  fixed,
+  str_detect,
+  str_extract,
+  str_split,
+  str_trim
+)

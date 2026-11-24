@@ -1,0 +1,9 @@
+template:
+  bootstrap: 5
+  bootswatch: brite
+  includes:
+    in_header: |
+      <style>
+        .page-header { border-bottom: transparent; }
+        .template-home .page-header {min-height: 50px;}
+      </style>
