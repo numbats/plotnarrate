@@ -26,7 +26,7 @@ The generate_alt_text() function scans the document for code chunks containing g
 
 In cases where the example is not self-contained, OpenAI's code interpreter is used in place of BrailleR to understand the code and generate alt-text. Output will be saved in a separate `alt-text.txt` file as seen below. The generated alt-text is saved in a separate file called alt-text.txt, as shown below:
 
-![](file/alt_text.png)
+![](man/figures/alt_text.png)
 
 # Known errors
 

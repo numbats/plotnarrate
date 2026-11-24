@@ -77,8 +77,8 @@ and image files as input.</p>
 <dd><p>A character string or vector of character strings
 specifying the paths to input files or directories. Supported
 formats include Quarto (`.qmd`), R Markdown (`.rmd`), PNG (`.png`),
-JPEG (`.jpg`, `.jpeg`).
-Directories are searched for supported files.</p></dd>
+and JPEG (`.jpg`, `.jpeg`). Directories are searched for supported
+files.</p></dd>
 
 
 <dt id="arg-outfile">outfile<a class="anchor" aria-label="anchor" href="#arg-outfile"></a></dt>
@@ -108,9 +108,9 @@ the default system prompt.</p></dd>
 <dd><p>An optional character string or named character
 vector containing reference captions for image inputs.
 A single caption is applied to all images. Alternatively,
-supply one caption per image. For multiple images, captions
-can be named using the corresponding file names, including
-their extensions. Not applicable to document inputs.</p></dd>
+supply one caption per image, either in the same order as
+the input files or named using the corresponding file names,
+including their extensions. Not applicable to document inputs.</p></dd>
 
 
 <dt id="arg-combine">combine<a class="anchor" aria-label="anchor" href="#arg-combine"></a></dt>
@@ -155,7 +155,7 @@ covering the figure as a whole.</p>
 </dl><p>Generated alt-text follows the default description guidelines,
 covering chart type, axes, approximate ranges, visual mappings,
 patterns, and relevant interpretations. A checklist is also
-generated to indicate whether these elements have been addressed.</p>
+included to indicate whether these elements have been addressed.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

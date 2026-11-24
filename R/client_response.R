@@ -71,8 +71,8 @@ system_prompt <- function(kind, user_instruct = NULL) {
 #' @param flnm A character string or vector of character strings
 #'   specifying the paths to input files or directories. Supported
 #'   formats include Quarto (`.qmd`), R Markdown (`.rmd`), PNG (`.png`),
-#'   JPEG (`.jpg`, `.jpeg`).
-#'   Directories are searched for supported files.
+#'   and JPEG (`.jpg`, `.jpeg`). Directories are searched for supported
+#'   files.
 #' @param outfile A character string specifying the path and file name
 #'   of the output text file. Defaults to `"alt-text.txt"` in the
 #'   current working directory.
@@ -87,9 +87,9 @@ system_prompt <- function(kind, user_instruct = NULL) {
 #' @param captions An optional character string or named character
 #'   vector containing reference captions for image inputs.
 #'   A single caption is applied to all images. Alternatively,
-#'   supply one caption per image. For multiple images, captions
-#'   can be named using the corresponding file names, including
-#'   their extensions. Not applicable to document inputs.
+#'   supply one caption per image, either in the same order as
+#'   the input files or named using the corresponding file names,
+#'   including their extensions. Not applicable to document inputs.
 #' @param combine A logical value indicating whether multiple image
 #'   inputs should be treated as panels or views of a single figure
 #'   and described together in one alt-text. Defaults to `FALSE`.
@@ -122,7 +122,7 @@ system_prompt <- function(kind, user_instruct = NULL) {
 #' Generated alt-text follows the default description guidelines,
 #' covering chart type, axes, approximate ranges, visual mappings,
 #' patterns, and relevant interpretations. A checklist is also
-#' generated to indicate whether these elements have been addressed.
+#' included to indicate whether these elements have been addressed.
 #'
 #' @seealso [extract_ggplot_code()]
 #' @examples
@@ -238,6 +238,7 @@ generate_alt_text.rmd <- generate_alt_text.qmd
 
 
 # Method: Image ---------------------------------------------------------------
+#' @export
 generate_alt_text.image <- function(
   flnm = NULL,
   outfile = NULL,
