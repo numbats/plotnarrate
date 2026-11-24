@@ -2,17 +2,23 @@
 % Please edit documentation in R/script.R
 \name{find_chunk_location}
 \alias{find_chunk_location}
-\title{Function to find chunk location in the original document}
+\title{Find Code Chunk Location in the Original Document}
 \usage{
 find_chunk_location(content, chunk_label, code)
 }
 \arguments{
-\item{content}{QMD/RMD file in .txt format}
+\item{content}{Character vector containing the document lines.}
 
-\item{chunk_label}{Chunk label}
+\item{chunk_label}{Label of the code chunk.}
 
-\item{code}{Source code}
+\item{code}{Source code extracted from the chunk.}
+}
+\value{
+A list containing the starting (`start`) and ending (`end`)
+  line numbers of the code chunk.
 }
 \description{
-Function to find chunk location in the original document
+Identifies the starting and ending line numbers of a code chunk
+in the original Quarto or R Markdown document using its label
+or source code.
 }

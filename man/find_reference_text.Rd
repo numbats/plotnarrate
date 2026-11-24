@@ -2,19 +2,25 @@
 % Please edit documentation in R/script.R
 \name{find_reference_text}
 \alias{find_reference_text}
-\title{Function to find reference text}
+\title{Find Reference Text for a Code Chunk}
 \usage{
 find_reference_text(content, chunk_label, chunk_start, chunk_end)
 }
 \arguments{
-\item{content}{QMD/RMD file in .txt format}
+\item{content}{Character vector containing the document lines.}
 
-\item{chunk_label}{Chunk label}
+\item{chunk_label}{Label of the code chunk.}
 
-\item{chunk_start}{Line number that the chunk starts}
+\item{chunk_start}{Starting line number of the code chunk.}
 
-\item{chunk_end}{Line number that the chunk ends}
+\item{chunk_end}{Ending line number of the code chunk.}
+}
+\value{
+A character string containing the matching reference
+  paragraph, or `NULL` if no reference is found.
 }
 \description{
-Function to find reference text
+Searches the document for paragraphs referencing a figure
+associated with the specified code chunk, excluding the
+code chunk itself.
 }

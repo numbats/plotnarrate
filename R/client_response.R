@@ -50,17 +50,111 @@ system_prompt <- function(kind, user_instruct = NULL) {
   paste0(begin, altText_guideline, end, additional_instruct)
 }
 
-#
 
 # Generic ---------------------------------------------------------------------------
 
-#' Function to generate alt-text for data visualisations in a Quarto or R Markdown file
-#' @param flnm Character string. Path and file name for the qmd or rmd file containing the plots.
-#' @param outfile Character string. Path and file name for the output file of alt-text. If not provided will write to alt-text.txt in current folder.
-#' @param openai_model Character string. Name of the OpenAI model used to generate alt-text.
-#' @param api Character string. OpenAI API key used for authentication.
-#' @param user_instruct Character string (optional). Additional user instructions to refine the style or content of the alt-text; to be appended the default system prompt.
-#' @import glue
+#' Generate Alt-Text for Data Visualisations
+#'
+#' Generates alt-text for data visualisations using an OpenAI language
+#' model. The function accepts Quarto documents, R Markdown documents,
+#' and image files as input.
+#'
+#' For Quarto and R Markdown documents, the function extracts potential
+#' ggplot code chunks and uses the R code, BrailleR output, and relevant
+#' reference text to generate alt-text.
+#'
+#' For image files, the function analyses the supplied image(s) and
+#' optionally incorporates user-provided captions as reference text.
+#' Multiple images can also be combined to generate a single description
+#' covering the figure as a whole.
+#'
+#' @param flnm A character string or vector of character strings
+#'   specifying the paths to input files or directories. Supported
+#'   formats include Quarto (`.qmd`), R Markdown (`.rmd`), PNG (`.png`),
+#'   JPEG (`.jpg`, `.jpeg`).
+#'   Directories are searched for supported files.
+#' @param outfile A character string specifying the path and file name
+#'   of the output text file. Defaults to `"alt-text.txt"` in the
+#'   current working directory.
+#' @param openai_model A character string specifying the OpenAI model
+#'   used to generate alt-text. Defaults to `"gpt-5.1"`.
+#' @param api A character string containing the OpenAI API key
+#'   used for authentication.
+#' @param user_instruct An optional character string containing
+#'   additional instructions to customise the style or content of
+#'   the generated alt-text. These instructions are appended to
+#'   the default system prompt.
+#' @param captions An optional character string or named character
+#'   vector containing reference captions for image inputs.
+#'   A single caption is applied to all images. Alternatively,
+#'   supply one caption per image. For multiple images, captions
+#'   can be named using the corresponding file names, including
+#'   their extensions. Not applicable to document inputs.
+#' @param combine A logical value indicating whether multiple image
+#'   inputs should be treated as panels or views of a single figure
+#'   and described together in one alt-text. Defaults to `FALSE`.
+#'   Only applicable to image inputs.
+#'
+#' @return Invisibly returns `NULL`. The generated alt-text,
+#'   reference captions, and token usage information are written
+#'   to the file specified by `outfile`.
+#'
+#' @details
+#' The function supports two input workflows:
+#'
+#' \describe{
+#'   \item{Quarto and R Markdown documents}{
+#'     Identifies potential ggplot-generating code chunks and
+#'     retrieves their associated figure references. The function
+#'     attempts to evaluate the extracted R code and generate
+#'     a textual description using BrailleR. If BrailleR output
+#'     is unavailable, the source code is provided to the
+#'     language model instead.
+#'   }
+#'   \item{Image files}{
+#'     Generates alt-text directly from image content, optionally
+#'     incorporating reference captions. When `combine = TRUE`,
+#'     multiple images are treated as panels or views of a single
+#'     figure and described together.
+#'   }
+#' }
+#'
+#' Generated alt-text follows the default description guidelines,
+#' covering chart type, axes, approximate ranges, visual mappings,
+#' patterns, and relevant interpretations. A checklist is also
+#' generated to indicate whether these elements have been addressed.
+#'
+#' @seealso [extract_ggplot_code()]
+#' @examples
+#' \dontrun{
+#' # Generate alt-text from a Quarto document
+#' generate_alt_text(
+#'   flnm = "report.qmd",
+#'   api = Sys.getenv("OPENAI_API_KEY")
+#' )
+#'
+#' # Generate alt-text from an image
+#' generate_alt_text(
+#'   flnm = "figures/plot.png",
+#'   api = Sys.getenv("OPENAI_API_KEY")
+#' )
+#'
+#' # Generate alt-text with a reference caption
+#' generate_alt_text(
+#'   flnm = "figures/plot.png",
+#'   captions = "Relationship between temperature and pressure.",
+#'   api = Sys.getenv("OPENAI_API_KEY")
+#' )
+#'
+#' # Combine multiple images into a single description
+#' generate_alt_text(
+#'   flnm = c("figures/panel_a.png", "figures/panel_b.png"),
+#'   captions = "Comparison of two distributions across different groups.",
+#'   combine = TRUE,
+#'   api = Sys.getenv("OPENAI_API_KEY")
+#' )
+#' }
+#'
 #' @export
 generate_alt_text <- function(
   flnm = NULL,
@@ -68,7 +162,8 @@ generate_alt_text <- function(
   openai_model = "gpt-5.1",
   api = NULL,
   user_instruct = "",
-  ...
+  captions = NULL,
+  combine = FALSE
 ) {
   if (is.null(flnm)) {
     stop("Missing input file.")
@@ -92,19 +187,19 @@ generate_alt_text.default <- function(input = NULL, ...) {
   )
 }
 
-#' @export
+
 generate_alt_text.alt_unknown <- generate_alt_text.default
 
 
 # Method: Quarto/RMD ---------------------------------------------------------------
-
 #' @export
 generate_alt_text.qmd <- function(
   flnm = NULL,
   outfile = NULL,
   openai_model = "gpt-5.1",
   api = NULL,
-  user_instruct = ""
+  user_instruct = "",
+  ...
 ) {
   outfile <- validate_input(outfile, api)
 
@@ -138,12 +233,11 @@ generate_alt_text.qmd <- function(
   write_alt_text(result, outfile)
 }
 
-#' @export
+
 generate_alt_text.rmd <- generate_alt_text.qmd
 
 
 # Method: Image ---------------------------------------------------------------
-#' @export
 generate_alt_text.image <- function(
   flnm = NULL,
   outfile = NULL,
@@ -207,9 +301,17 @@ generate_alt_text.image <- function(
 
 # Accepted extension
 DOC_EXT <- c("qmd", "rmd")
-IMG_EXT <- c("png", "jpg", "jpeg", "webp", "gif")
+IMG_EXT <- c("png", "jpg", "jpeg")
 
-# Function to determine class of input
+#' Determine the Class of Input Files
+#'
+#' Determines the input type based on file extensions and assigns
+#' the corresponding class for method dispatch.
+#'
+#' @param input A character vector of file paths.
+#' @return The input with an assigned class (`qmd`, `rmd`,
+#'   `image`, `mixed`, or `alt_unknown`).
+#' @noRd
 determine_class <- function(input) {
   files <- expand_paths(input)
 
@@ -234,7 +336,14 @@ determine_class <- function(input) {
   structure(input, class = cls)
 }
 
-# Rationale: Ideally, we want mulitple inputs (e.g. null plot and line up plot)
+#' Expand Input File Paths
+#'
+#' Expands directory paths into individual supported file paths
+#' and checks that all specified files exist.
+#'
+#' @param input A character vector of file or directory paths.
+#' @return A character vector of expanded file paths.
+#' @noRd
 expand_paths <- function(input) {
   files <- unlist(lapply(input, function(p) {
     if (dir.exists(p)) {
@@ -261,6 +370,15 @@ expand_paths <- function(input) {
   files
 }
 
+#' Validate Input Parameters
+#'
+#' Validates the output file path and OpenAI API key, providing
+#' a default output file path when none is supplied.
+#'
+#' @param outfile Output file path.
+#' @param api OpenAI API key.
+#' @return The validated output file path.
+#' @noRd
 validate_input <- function(outfile, api) {
   if (is.null(outfile)) {
     outfile <- "alt-text.txt"
@@ -282,6 +400,18 @@ validate_input <- function(outfile, api) {
   return(outfile)
 }
 
+#' Create an Alt-Text Item
+#'
+#' Creates an alt-text item containing the source information
+#' and reference text, with a class indicating the input type.
+#'
+#' @param kind Input type (`code` or `image`).
+#' @param label Identifier for the input item.
+#' @param source Source file path.
+#' @param reference_paragraph Optional reference paragraph.
+#' @param ... Additional information associated with the item.
+#' @return An object of class `alt_item_code` or `alt_item_image`.
+#' @noRd
 new_alt_item <- function(kind, label, source, reference_paragraph = NULL, ...) {
   structure(
     list(
@@ -295,7 +425,17 @@ new_alt_item <- function(kind, label, source, reference_paragraph = NULL, ...) {
 }
 
 
-#' This function returns a list of length n where n = length(input_files)
+#' Match Captions to Input Images
+#'
+#' Matches user-provided captions to image files by file name
+#' or position, and validates the supplied captions.
+#'
+#' @param captions Optional character vector of captions.
+#' @param files Character vector of image file paths.
+#' @param combine Logical; whether images are combined into one figure.
+#' @return A character vector of captions corresponding to the
+#'   input images.
+#' @noRd
 lookup_captions <- function(captions, files, combine) {
   n <- length(files)
 
@@ -368,7 +508,19 @@ lookup_captions <- function(captions, files, combine) {
 }
 
 # HTTP Request ----------------------------------------------------------------------
-
+#' Generate Alt-Text Using an OpenAI Model
+#'
+#' Sends image content or visualisation information to an OpenAI
+#' model and collects the generated alt-text and usage information.
+#' For code inputs, attempts to use BrailleR output before falling
+#' back to the original R code.
+#'
+#' @param body_list A list containing model settings, API key,
+#'   user instructions, and token limit.
+#' @param content A list of alt-text items to process.
+#' @return A data frame containing item labels, generated alt-text,
+#'   reference paragraphs, and cumulative usage information.
+#' @noRd
 client_responses <- function(body_list, content) {
   if (length(content) == 0) {
     stop("No plots found in the supplied input")
@@ -501,7 +653,17 @@ client_responses <- function(body_list, content) {
   return(output)
 }
 
-
+#' Write Generated Alt-Text to a File
+#'
+#' Formats the generated alt-text, reference captions, and usage
+#' information, then writes the results to a text file.
+#'
+#' @param input A data frame containing generated alt-text and
+#'   associated metadata.
+#' @param outfile Output text file path.
+#' @return Invisibly returns the result of [writeLines()], which is
+#'   `NULL`.
+#' @noRd
 write_alt_text <- function(input, outfile) {
   if (all(stringr::str_detect(tolower(input$usage), "visualisation"))) {
     label <- "# Image: {input$chunk_label} --------------------"

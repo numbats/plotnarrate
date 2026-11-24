@@ -2,15 +2,19 @@
 % Please edit documentation in R/script.R
 \name{extract_paragraph}
 \alias{extract_paragraph}
-\title{Function that extract reference text using chunk_label}
+\title{Extract a Paragraph from Document Content}
 \usage{
 extract_paragraph(content, line_number)
 }
 \arguments{
-\item{content}{QMD/RMD file in .txt format}
+\item{content}{Character vector containing the document lines.}
 
-\item{line_number}{Line number that contains `@chunk_label`}
+\item{line_number}{Line number within the paragraph.}
+}
+\value{
+A character string containing the extracted paragraph.
 }
 \description{
-Function that extract reference text using chunk_label
+Extracts the complete paragraph containing a specified line
+by identifying the surrounding blank lines and headings.
 }
