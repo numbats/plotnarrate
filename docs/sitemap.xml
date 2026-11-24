@@ -11,8 +11,10 @@
 <url><loc>/reference/extract_paragraph.html</loc></url>
 <url><loc>/reference/find_chunk_location.html</loc></url>
 <url><loc>/reference/find_reference_text.html</loc></url>
+<url><loc>/reference/generate_alt_text.default.html</loc></url>
 <url><loc>/reference/generate_alt_text.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/lookup_captions.html</loc></url>
 <url><loc>/reference/parse_code.html</loc></url>
 </urlset>
 

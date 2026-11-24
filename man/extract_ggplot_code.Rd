@@ -2,13 +2,34 @@
 % Please edit documentation in R/script.R
 \name{extract_ggplot_code}
 \alias{extract_ggplot_code}
-\title{Extract ggplot from qmd/rmd}
+\title{Extract ggplot Code from QMD/RMD Files}
 \usage{
 extract_ggplot_code(file_path)
 }
 \arguments{
-\item{file_path}{Path to the QMD/RMD file}
+\item{file_path}{A character string specifying the path to a
+Quarto (.qmd) or R Markdown (.Rmd) file.}
+}
+\value{
+A list containing information about each identified
+  ggplot code chunk. Each element is a list containing:
+  \describe{
+    \item{chunk_label}{The label of the code chunk.}
+    \item{chunk_code}{The source code within the chunk.}
+    \item{reference_paragraph}{The paragraph referencing the
+    corresponding figure, if found.}
+  }
 }
 \description{
-Extract ggplot from qmd/rmd
+Extracts code chunks that appear to generate ggplot visualisations
+from a Quarto (.qmd) or R Markdown (.Rmd) document. For each
+identified chunk, the function retrieves its label, source code,
+and the paragraph referencing the corresponding figure.
+}
+\details{
+The function uses `knitr::purl()` to extract code chunks from the
+input document, then identifies potential ggplot-generating chunks
+by searching for references to `ggplot` or `geom` alongside `aes`.
+It also retrieves the original location of each chunk and searches
+for paragraphs referencing its figure label.
 }

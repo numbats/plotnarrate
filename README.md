@@ -1,4 +1,4 @@
-# plotnarrate <a href="https://numbats.github.io/autoAlt/"><img src="man/figures/autoAlt-logo.png" align="right" height="138" /></a>
+# plotnarrate <a href="https://numbats.github.io/plotnarrate/"><img src="man/figures/autoAlt-logo.png" align="right" height="138" /></a>
 
 Plotnarrate is a demo R package for automatically generating alt-text from QMD and RMD files. It includes the `generate_alt_text()` function, which uses Ellmer and BrailleR to create alt-text for plots in your documents.
 
