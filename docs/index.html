@@ -56,7 +56,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="plotnarrate-">plotnarrate <a href="https://numbats.github.io/plotnarrate/" class="external-link"><img src="reference/figures/autoAlt-logo.png" align="right" height="138"></a>
+<div class="page-header"><h1 id="plotnarrate-">plotnarrate <a href="https://numbats.github.io/plotnarrate/" class="external-link"><img src="reference/figures/plotnarrate-hex.png" align="right" height="138" style="max-width: 20%;"></a>
 <a class="anchor" aria-label="anchor" href="#plotnarrate-"></a>
 </h1></div>
 <p>Plotnarrate is a demo R package for automatically generating alt-text from QMD and RMD files. It includes the <code><a href="reference/generate_alt_text.html">generate_alt_text()</a></code> function, which uses Ellmer and BrailleR to create alt-text for plots in your documents.</p>
@@ -71,7 +71,16 @@
 <div class="section level1">
 <h1 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h1>
-<p>To get started, you will need to get an API key for OpenAI from <a href="https://platform.openai.com/api-keys" class="external-link uri">https://platform.openai.com/api-keys</a>.</p>
+<p>To get started, you will need to get an API key for OpenAI from <a href="https://platform.openai.com/api-keys" class="external-link uri">https://platform.openai.com/api-keys</a>. The <code><a href="reference/generate_alt_text.html">generate_alt_text()</a></code> functions support two input workflows:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Quarto and R Markdown documents</strong> (.qmd, .rmd): Extracts plotting code and associated reference text to generate alt-text.</li>
+<li>
+<strong>Image files</strong> (.png, .jpg, .jpeg): Generates alt-text directly from images, with the option to provide reference captions or combine multiple images into a single description.</li>
+</ol>
+<div class="section level2">
+<h2 id="generating-alt-text-from-quarto-and-r-markdown-documents">Generating alt-text from Quarto and R Markdown documents<a class="anchor" aria-label="anchor" href="#generating-alt-text-from-quarto-and-r-markdown-documents"></a>
+</h2>
 <p>Provide the file path and name for the <code>qmd</code> or <code>Rmd</code> file you want to process, and an output file path and name. Ensure that all code required to generate graphics is included in the same file. This github repo comes with a <code>test.qmd</code> file in the <code>inst</code> folder to get you started.</p>
 <pre><code><span><span class="fu">plotnarrate</span><span class="fu">::</span><span class="fu"><a href="reference/generate_alt_text.html">generate_alt_text</a></span><span class="op">(</span>flnm <span class="op">=</span> <span class="st">"inst/test.qmd"</span>,</span>
 <span>                               outfile <span class="op">=</span> <span class="st">"inst/test-out.txt"</span>,</span>
@@ -79,6 +88,56 @@
 <p>The generate_alt_text() function scans the document for code chunks containing ggplot, geom, and aes, identifying the source code that generates plots. It extracts the chunk label and uses it to locate the corresponding reference paragraph in the text, and sends requests to ChatGPT via Ellmer, combining: the output from BrailleR (when applicable), and a custom system prompt.</p>
 <p>In cases where the example is not self-contained, OpenAI’s code interpreter is used in place of BrailleR to understand the code and generate alt-text. Output will be saved in a separate <code>alt-text.txt</code> file as seen below. The generated alt-text is saved in a separate file called alt-text.txt, as shown below:</p>
 <p><img src="reference/figures/alt_text.png"></p>
+</div>
+<div class="section level2">
+<h2 id="generating-alt-text-from-image-files">Generating alt-text from image files<a class="anchor" aria-label="anchor" href="#generating-alt-text-from-image-files"></a>
+</h2>
+<p>You can also provide existing image files directly without requiring the original plotting code. Supported formats include PNG (.png) and JPEG (.jpg, .jpeg). By default, each image is processed separately, producing an individual alt-text description.</p>
+<pre><code><span><span class="fu">plotnarrate</span><span class="fu">::</span><span class="fu"><a href="reference/generate_alt_text.html">generate_alt_text</a></span><span class="op">(</span>flnm <span class="op">=</span> <span class="st">"inst/plot.png"</span>,</span>
+<span>                               outfile <span class="op">=</span> <span class="st">"inst/alt-text.txt"</span>,</span>
+<span>                               api <span class="op">=</span> <span class="va">api</span><span class="op">)</span></span></code></pre>
+<div class="section level3">
+<h3 id="providing-reference-captions">Providing reference captions<a class="anchor" aria-label="anchor" href="#providing-reference-captions"></a>
+</h3>
+<p>You can optionally provide reference captions to give the model additional context about the visualisation. Captions can be supplied as a character string or a named character vector.</p>
+<pre><code><span><span class="fu">plotnarrate</span><span class="fu">::</span><span class="fu"><a href="reference/generate_alt_text.html">generate_alt_text</a></span><span class="op">(</span>flnm <span class="op">=</span> <span class="st">"inst/plot.png"</span>,</span>
+<span>                               outfile <span class="op">=</span> <span class="st">"inst/alt-text.txt"</span>,</span>
+<span>                               captions <span class="op">=</span> <span class="st">"Relationship between temperature and pressure."</span>,</span>
+<span>                               api <span class="op">=</span> <span class="va">api</span><span class="op">)</span></span></code></pre>
+<p>A single caption can be applied to all input images. Alternatively, you can provide individual captions for each image, either in the same order as the input files or by naming them with their corresponding file names.</p>
+</div>
+<div class="section level3">
+<h3 id="combining-multiple-images">Combining multiple images<a class="anchor" aria-label="anchor" href="#combining-multiple-images"></a>
+</h3>
+<p>When a figure consists of multiple panels or related visualisations, you can set combine = TRUE to process all supplied images together and generate a single description covering the figure as a whole.</p>
+<pre><code><span><span class="fu">plotnarrate</span><span class="fu">::</span><span class="fu"><a href="reference/generate_alt_text.html">generate_alt_text</a></span><span class="op">(</span></span>
+<span>                               flnm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"inst/panel_a.png"</span>, <span class="st">"inst/panel_b.png"</span><span class="op">)</span>,</span>
+<span>                               outfile <span class="op">=</span> <span class="st">"inst/alt-text.txt"</span>,</span>
+<span>                               captions <span class="op">=</span> <span class="st">"Comparison of two distributions across different groups."</span>,</span>
+<span>                               combine <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                               api <span class="op">=</span> <span class="va">api</span><span class="op">)</span></span></code></pre>
+<p>By default, combine = FALSE, meaning each image is described independently. Set combine = TRUE when the images represent different panels or views of the same figure.</p>
+</div>
+<div class="section level3">
+<h3 id="additional-options">Additional options<a class="anchor" aria-label="anchor" href="#additional-options"></a>
+</h3>
+<p>The function also provides options to customise the generated alt-text:</p>
+<ul>
+<li>
+<strong>openai_model</strong>: Specifies the OpenAI model used to generate alt-text. Defaults to “gpt-5.1”.</li>
+<li>
+<strong>user_instruct</strong>: Allows you to provide additional instructions to customise the style or content of the generated alt-text.</li>
+<li>
+<strong>outfile</strong>: Specifies the output text file. Defaults to “alt-text.txt” in the current working directory.</li>
+</ul>
+<p>For example, you can provide additional instructions to request a particular writing style:</p>
+<pre><code><span><span class="fu">plotnarrate</span><span class="fu">::</span><span class="fu"><a href="reference/generate_alt_text.html">generate_alt_text</a></span><span class="op">(</span></span>
+<span>                               flnm <span class="op">=</span> <span class="st">"inst/plot.png"</span>,</span>
+<span>                               outfile <span class="op">=</span> <span class="st">"inst/alt-text.txt"</span>,</span>
+<span>                               user_instruct <span class="op">=</span> <span class="st">"Use concise language and focus on the main statistical patterns."</span>,</span>
+<span>                               api <span class="op">=</span> <span class="va">api</span><span class="op">)</span></span></code></pre>
+</div>
+</div>
 </div>
 <div class="section level1">
 <h1 id="contribute">Contribute<a class="anchor" aria-label="anchor" href="#contribute"></a>
